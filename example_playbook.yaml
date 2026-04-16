@@ -1,0 +1,4 @@
+# ============ Security Tools ==============
+  - import_tasks: security_tools/oec_qualys_trellix.yaml
+    vars:
+      installer: /PATH/TO/INSTALLERS/qualys_trellix/oec-qualystrellixinstallers-linux.tgz
