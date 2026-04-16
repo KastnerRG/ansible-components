@@ -1,0 +1,24 @@
+- name: Disable SSH password authentication
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PasswordAuthentication\s+'
+    line: 'PasswordAuthentication no'
+    state: present
+    validate: '/usr/sbin/sshd -t -f %s'
+  register: ssh_password_auth_changed
+- name: Ensure SSH pubkey authentication is enabled
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PubkeyAuthentication\s+'
+    line: 'PubkeyAuthentication yes'
+    state: present
+    validate: '/usr/sbin/sshd -t -f %s'
+  register: ssh_pubkey_auth_changed
+- name: Restart SSH service
+  become: true
+  ansible.builtin.systemd_service:
+    name: ssh
+    state: restarted
+  when: ssh_password_auth_changed.changed or ssh_pubkey_auth_changed.changed
